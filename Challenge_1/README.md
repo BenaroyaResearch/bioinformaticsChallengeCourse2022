@@ -8,6 +8,10 @@ Challenge 1 offers the opportunity for participants to convert a table of data i
 
 The data for Challenge 1 was kindly offered by the Campbell Lab, and pertains to differences in gene expression between T-cells that are constituently expressing Foxo1, and Wildtype cells after stimulation/activation. As expected, there were extreme differences in gene expression in the treatment (CA Foxo1) and control groups, making these data useful as very clean example. Accompanying both parts of these challenge are snippets of **Pseudocode**. While psuedocode is not readable by R, it is useful for completing this exercise as it forms a organized series of human readable steps for the coder (you!) to convert into the R language.
 
+The RDS datafiles required in this challenge can be downloaded from Box here:
+
+https://bri.box.com/s/ljvhuwnozk320t0491by9qk894d8rzwq
+
 
 # PART ONE
 
