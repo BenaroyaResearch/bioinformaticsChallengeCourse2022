@@ -38,7 +38,7 @@ Part two is anticipated to be more challeneging that part one, and should be con
 
 - **OPEN** RStudio and install/load packages (recommended: edgeR, limma, ggrepel, ggplot2)
 - **LOAD** data (ie, readRDS Foxo1DGEList.Rds) Note: These data have already been normalized.
-- **PERFORM** generalized linear model (quasi likelihood) analysis to compare the three control stim samples to three Foxo1 Stim samples (named GFP+ Stim in the object you just loaded), amd extract the top Genes
+- **PERFORM** generalized linear model (quasi likelihood) analysis to compare the three control stim samples to three Foxo1 Stim samples (named GFP+ Stim in the object you just loaded), and extract the top Genes
     - Helpful functions: model.matrix, glmQLFit, makeContrasts, glmQLFTest, topTag
 - **USE** the top genes from the previous step to create a volcano plot as per Part I.
 - **SAVE** the volcano plot.
