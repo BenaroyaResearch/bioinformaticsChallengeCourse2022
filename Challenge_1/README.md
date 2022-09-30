@@ -23,7 +23,9 @@ In part one, you will be converting a table of DE genes into a volcano plot, inc
 ## Pseudocode:
 
 - **OPEN** RStudio and install and load the libraries you'll be using (recommended: ggrepel, ggplot2)
-- **LOAD** the data you'll be using (ig, readRDS DEGenes.Rds)
+    - Helpful functions: install.packages, library()
+- **LOAD** the data you'll be using (DGEgenes.Rds)
+    - Helpful functions: setwd(), readRDS()
 - **CREATE** a volcano plot object using the Foxo1DGE data: the x axis being the logFC, and the y axis being an appropriate transformation of the FDR columns of the data. Customize the plot as best you can.
     - Helpful functions: ggplot, geom_point, geom_text_repel, scale_color_manual, geom_hline, and theme.
 - **SAVE** the volcano plot visualization.
@@ -43,9 +45,9 @@ Part two is anticipated to be more challeneging that part one, and should be con
 - **OPEN** RStudio and install/load packages (recommended: edgeR, limma, ggrepel, ggplot2)
 - **LOAD** data (ie, readRDS Foxo1DGEList.Rds) Note: These data have already been normalized.
 - **PERFORM** generalized linear model (quasi likelihood) analysis to compare the three control stim samples to three Foxo1 Stim samples (named GFP+ Stim in the object you just loaded), and extract the top Genes
-    - Helpful functions: model.matrix, glmQLFit, makeContrasts, glmQLFTest, topTag
+    - Helpful functions: model.matrix, glmQLFit, makeContrasts, glmQLFTest or voom, topTag
 - **USE** the top genes from the previous step to create a volcano plot as per Part I.
 - **SAVE** the volcano plot.
 
-This is the end of Challenge 1. Feel free to deposit any of your code and your visualizations in the 'code' folder within the Challenge 1 directory.
+This is the end of Challenge 1. Feel free to deposit any of your code and your visualizations in the 'codeSubmissions' folder within the Challenge 1 directory on Box.
 
