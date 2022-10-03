@@ -16,4 +16,4 @@ https://www.rstudio.com/products/rstudio/
 
 ## Wrapup Luncheon
 
-On the fourth Friday of each month, the Bioinformatics Group will host a luncheon in order to answer any questions about the challenge as well as invite participants to share their solutions and insights into how they solved or were unable to solve the challenge.
+On the fourth Tuesday of each month, the Bioinformatics Group will host a luncheon in order to answer any questions about the challenge as well as invite participants to share their solutions and insights into how they solved or were unable to solve the challenge. This luncheon is currently reserved for 2 N, and everyone is invited to attend regardless as to how far they progressed within the challenge.
