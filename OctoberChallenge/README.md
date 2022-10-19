@@ -12,6 +12,8 @@ The RDS datafiles required in this challenge can be downloaded from Box here:
 
 https://bri.box.com/s/ljvhuwnozk320t0491by9qk894d8rzwq
 
+Code submissions can be uploaded using the following link: https://bri.app.box.com/f/07858604a1d94397b74e5d78a6d9fb3b. This link will work, but upload attempts within Box won't work (you can't navigate to the codeSubmissions sub-folder in the online interface to Box and upload once there). 
+
 
 # PART ONE
 
@@ -49,5 +51,5 @@ Part two is anticipated to be more challeneging that part one, and should be con
 - **USE** the top genes from the previous step to create a volcano plot as per Part I.
 - **SAVE** the volcano plot.
 
-This is the end of Challenge 1. Feel free to deposit any of your code and your visualizations in the 'codeSubmissions' folder using the following link: https://bri.app.box.com/f/07858604a1d94397b74e5d78a6d9fb3b 
+This is the end of Challenge 1. Feel free to deposit any of your code and your visualizations using the following link: https://bri.app.box.com/f/07858604a1d94397b74e5d78a6d9fb3b 
 
