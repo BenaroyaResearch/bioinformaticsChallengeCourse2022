@@ -49,5 +49,5 @@ Part two is anticipated to be more challeneging that part one, and should be con
 - **USE** the top genes from the previous step to create a volcano plot as per Part I.
 - **SAVE** the volcano plot.
 
-This is the end of Challenge 1. Feel free to deposit any of your code and your visualizations in the 'codeSubmissions' folder within the Challenge 1 directory on Box.
+This is the end of Challenge 1. Feel free to deposit any of your code and your visualizations in the 'codeSubmissions' folder using the following link: https://bri.app.box.com/f/07858604a1d94397b74e5d78a6d9fb3b 
 
