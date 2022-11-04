@@ -1,4 +1,4 @@
-## Challenge 1
+## Challenge 2
 
 Heatmaps are another popular method to visualize differentially expressed genes between groups, and have the added benefit of having flexible axes annotations that can overlay important information such as sample groups, sample status, and side-paneled graphs of important measurements for each gene or subject in the Heatmap.
 
