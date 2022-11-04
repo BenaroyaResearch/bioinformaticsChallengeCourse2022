@@ -16,13 +16,13 @@ https://bri.box.com/s/ljvhuwnozk320t0491by9qk894d8rzwq
 
 Code submissions can be uploaded using the following link: https://bri.app.box.com/f/07858604a1d94397b74e5d78a6d9fb3b. This link will work, but upload attempts within Box won't work (you can't navigate to the codeSubmissions sub-folder in the online interface to Box and upload once there).
 
-##PART ONE
+## PART ONE
 
 Objective: Produce a Heatmap provided a table of Average Gene Expression values.
 
 In part one, you will be converting a matrix of Average Expression values into a heatmap.
 
-###Pseudocode:
+### Pseudocode:
 
 OPEN RStudio and install and load the libraries you'll be using (recommended: complexHeatmap)
 Helpful functions: install.packages, library()
@@ -32,13 +32,13 @@ CREATE a heatmap object using the scaled sample expression matrix. Note you will
 Helpfulfunctions: scale(), t(), ComplexHeatmap::Heatmap() (this latter function can take a lot of robust arguments, which will customize your heatmap!)
 SAVE the heatmap visualization.
 
-##PART TWO
+## PART TWO
 
 Objective: Annotate the Heatmap using the Annotation object
 
 A basic heatmap is informative, but can be made far more so by attaching information. The annotation object contains a number of interesting annotations -- including which visit the sample corresponds to, which donor the sample belongs to, as well as a proportion of the cells assigning to a particular cluster of interest. This cluster was discovered to be associated with patients as they began to convalese, and so should be higher in the second visit samples. All of these can be attached to the heatmap to increase its informative power.
 
-Psuedocode:
+### Psuedocode:
 
 OPEN RStudio and install/load packages (recommended: ComplexHeatmap, ggplot2)
 LOAD data (readRDS annotationHeatmap.Rds)
