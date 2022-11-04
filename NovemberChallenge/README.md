@@ -14,7 +14,7 @@ The RDS datafiles required in this challenge can be downloaded from Box here:
 
 [https://bri.box.com/s/ljvhuwnozk320t0491by9qk894d8rzwq](https://bri.box.com/s/zm1eyaxm18i3m6sabwfq9alpntui2avd)
 
-Code submissions can be uploaded using the following link: https://bri.app.box.com/f/07858604a1d94397b74e5d78a6d9fb3b. This link will work, but upload attempts within Box won't work (you can't navigate to the codeSubmissions sub-folder in the online interface to Box and upload once there).
+Code submissions can be uploaded using the following link: [https://bri.app.box.com/f/07858604a1d94397b74e5d78a6d9fb3b](https://bri.app.box.com/f/a9359adcaae4431296eb01356f4f1fd4). This link will work, but upload attempts within Box won't work (you can't navigate to the codeSubmissions sub-folder in the online interface to Box and upload once there).
 
 ## PART ONE
 
