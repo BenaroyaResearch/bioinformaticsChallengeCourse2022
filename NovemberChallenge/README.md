@@ -25,13 +25,16 @@ In part one, you will be converting a matrix of Average Expression values into a
 ### Pseudocode:
 
 OPEN RStudio and install and load the libraries you'll be using (recommended: complexHeatmap)
-  Helpful functions: install.packages, library()
+
+&emsp Helpful functions: install.packages, library()
   
 LOAD the data you'll be using (sampleAverageExpressionMatrix.Rds)
-  Helpful functions: setwd(), readRDS()
+
+&emspHelpful functions: setwd(), readRDS()
   
 CREATE a heatmap object using the scaled sample expression matrix. Note you will have transform the matrix in order to rotate it into the correct input if using ComplexHeatmap.
-  Helpfulfunctions: scale(), t(), ComplexHeatmap::Heatmap() (this latter function can take a lot of robust arguments, which will customize your heatmap!)
+
+&emsp Helpful functions: scale(), t(), ComplexHeatmap::Heatmap() (this latter function can take a lot of robust arguments, which will customize your heatmap!)
   
 SAVE the heatmap visualization.
 
@@ -48,9 +51,11 @@ OPEN RStudio and install/load packages (recommended: ComplexHeatmap, ggplot2)
 LOAD data (readRDS annotationHeatmap.Rds)
 
 CREATE a bargraph object (no error bars, as there is only one average sample per individual).
-  Helpful functions: ggplot(), geom_bar
+ 
+&emsp Helpful functions: ggplot(), geom_bar
 
 Attach annotations to the heatmap function
-  Helpful functions: ComplexHeatmap::left_annotation, ComplexHeatmap::right_annotation (you can also use top or bottom!)
+
+&emsp Helpful functions: ComplexHeatmap::left_annotation, ComplexHeatmap::right_annotation (you can also use top or bottom!)
 
 SAVE the new heatmap.
