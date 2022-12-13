@@ -1,4 +1,4 @@
-# Challenge 1
+# Challenge 3
 
 Regression models are useful for describing the relationship between one (or multiple) factors and a response variable, particularly when you believe the response and the predictor variables are relatively colinear. Experimental dose response, age-outcome prediction of disease, and read depths vs gene count are all examples of the sort of information that a regression analysis may shed insight into.
 
