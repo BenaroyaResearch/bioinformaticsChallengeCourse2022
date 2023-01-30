@@ -1,4 +1,4 @@
-# Challenge 3
+# Challenge 4
 
 Many datasets that we interact with at BRI are very high dimensional datasets. Principal Compoennt Analysis make high dimensional data more interpretable by reducing the number of dimensions down to compoentns that best describe the variation in the dataset without losing large amonuts of information.
 
