@@ -12,6 +12,10 @@ Code submissions can be uploaded using the following link: https://bri.app.box.c
 
 Install apird:
 
+https://github.com/BenaroyaResearch/apird
+
+If you do not have access to this github, please contact 
+
 
 # PART ONE
 
@@ -29,19 +33,23 @@ The first step in this process is to use apird to grab our annotations and the g
     - Helpful functions: apird::getAnno()
 - **PULL** the gene counts of the same libraries
     - Helpful functions: apird::getGeneCounts()
+- **MERGE** these objects together into a 'super' object
+    - helpful functions: merge()
 
 # PART TWO
 
-## Objective: Visualize the quality of the dataset and cut out the samples that aren't up to scratch. For bulk datasets, we usually use a threshold of mean CV and percent of reads aligned to the genome
+## Objective: Visualize the quality of the dataset and cut out the samples that aren't up to scratch. For bulk datasets, we usually use a threshold of mean CV and percent of reads aligned to the genome.
 
 
 ## Psuedocode:
 
-- **CONSTRUCT** a scatterplot of the actual observed data, defining the color of the points by the treatment
-    - Helpful functions: ggplot(), geom_point(), aes()
-- **CUSTOMIZE** your plot as you like, including coloring the different time points, and labelling the axes as their correct PC designation.
-    - Helpful functions:, scale_color_manual(), labs()
-- **SAVE** your PCA plot.
+- **VISUALIZE** the libraries by their total aligned reads, with a valid cutoff of your choosing (the default is 1,000,000 reads):
+    - Helpful functions: ggplot(), geom_col(), aes(), geom_hline(), order(), scale_x_discreet()
+- **VISUALIZE** the libraries as a scatterplot of aligned reads versus mean CV with cutoffs -- play around with your cutoffs to see what retains and loses samples:
+    - Helpful functions: ggplot(), geom_point(), aes(), geom_hline(), geom_vline()
+- **CUT** libraries out that no longer make the QC thresholds
+    - Helpful functions: dpylr::filter()
+- **SAVE** your Visualizations and the final merged designed object after making cuts.
 
-This is the end of Challenge 4. Feel free to deposit any of your code and your visualizations using the following link: https://bri.app.box.com/f/ed174ba04a1049e08a4f8db61d4c2833 
+This is the end of Challenge 5. Feel free to deposit any of your code and your visualizations using the following link: https://bri.app.box.com/f/2aa763b73111448e8d6bc4d13efa2a12 
 
