@@ -48,7 +48,7 @@ The first step in this process is to use apird to grab our annotations and the g
 - **VISUALIZE** the libraries as a scatterplot of aligned reads versus mean CV with cutoffs -- play around with your cutoffs to see what retains and loses samples:
     - Helpful functions: ggplot(), geom_point(), aes(), geom_hline(), geom_vline()
 - **CUT** libraries out that no longer make the QC thresholds
-    - Helpful functions: dpylr::filter()
+    - Helpful functions: dplyr::filter()
 - **SAVE** your Visualizations and the final merged designed object after making cuts.
 
 This is the end of Challenge 5. Feel free to deposit any of your code and your visualizations using the following link: https://bri.app.box.com/f/2aa763b73111448e8d6bc4d13efa2a12 
