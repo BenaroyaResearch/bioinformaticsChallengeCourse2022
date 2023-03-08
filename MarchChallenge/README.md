@@ -14,7 +14,7 @@ Install apird:
 
 https://github.com/BenaroyaResearch/apird
 
-If you do not have access to this github, please contact 
+If you do not have access to the BRI github, please contact Robyn Meshulam (RMeshulam@benaroyaresearch.org). You will have to have a general github account/login before it can be assigned permissionso to access the BRI github.
 
 
 # PART ONE
