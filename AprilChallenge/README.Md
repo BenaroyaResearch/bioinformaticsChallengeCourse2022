@@ -8,7 +8,7 @@ The box folder with the count matrices for both the RNA counts and the ADT count
 
 ## Objective: construct a Seurat Object
 
-The first step in this process is to use apird to grab our annotations and the gene count matrices for our libraries of interest
+The first step in this process is to produce a Seurat Object using the counts data from both assay -- RNA and Protein (FB):
 
 ## Pseudocode:
 
