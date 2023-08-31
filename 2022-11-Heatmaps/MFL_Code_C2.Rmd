@@ -1,0 +1,98 @@
+---
+title: "BioinformaticsChallenge2"
+author: "M. Lawrance"
+date: '2022-10-31'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r library packages}
+# Load necessary libraries. 
+library(ggplot2)
+library(ggrepel)
+library(edgeR)
+library(Seurat)
+
+```
+
+
+```{r part 1}
+#set working directory to the box folder
+setwd("~/Library/CloudStorage/Box-Box/BioinformaticsChallengeCourse/Challenge 2/")
+
+# load the data matrix
+avgExprMat <- readRDS("sampleAverageExpressionMatrix.Rds")
+
+#Scale and transpose the Expression Matrix
+scaledExprMat <- t(scale(t(avgExprMat)))
+
+
+Heatmap(t(scaledExprMat), 
+        name = "Gene z-score", # defaultscaling is z-score, so name the scalebar that
+        clustering_distance_columns = "manhattan", # we're clustering the columns based on similarity
+        cluster_columns = TRUE,  # Cluster columns by similarity via manhattan method
+        show_column_dend = TRUE, # Show the dendrogram at the top of the columns to show relatedness
+        row_order = c(sampleAnno$Sample[grep("v1", sampleAnno$Sample)], sampleAnno$Sample[grep("v2", sampleAnno$Sample)]), # Manual ordering of the rows
+        column_dend_height = unit(0.5, "cm"), # How big the dendrogram should be
+        cluster_rows = FALSE, # Setting the clustering of rows to false since we want manual row order
+        show_row_names = TRUE,# Display Sample names
+        show_column_names = FALSE, # Don't display gene names
+        row_names_gp = gpar(fontsize = 10)) # Set the size of the sample names
+
+```
+```{r part 2}
+
+#Set up Annotation
+sampleAnno <- as.data.frame(colnames(avgExprMat)) #Just sample names
+colnames(sampleAnno) <- "Sample" #Make sure to name the columns of the annotation file
+sampleAnno$Visit <- "Visit1" # New column for visit, all values as visit1
+sampleAnno$Visit[grep("v2", sampleAnno$Sample)] <- "Visit2" #replace visit1 as visit2 for all the second visit samples
+sampleAnno$Donor <- substr(sampleAnno$Sample,1,nchar(sampleAnno$Sample)-2) # Third column for donor name, subtracting the visit annotation from the column name
+
+rowOrder <- sampleAnno$Sample #Ordering the samples based on visit
+rowOrder <- rowOrder[order(sub('.*v', '', rowOrder))]
+
+
+#This is the object you guys got (columnAnno)
+columnAnno <- rowAnnotation(df = sampleAnno[2:3],
+                              col = list('Visit' = c("Visit1" = "blue", "Visit2" = "orange"),
+                                         'Donor' = setNames(big_colorblind_pal(8), unique(sampleAnno$Donor))),
+                              simple_anno_size = unit(0.25, "cm"),
+                            show_legend = FALSE)
+
+#Reading in the bargraph object
+
+cluster3Bar <- readRDS("~/Downloads/Cluster3Proportions.Rds") 
+#Converting to a numerical format (necessary for rowAnnotation
+cluster3Bar$pctCells <- as.numeric(cluster3Bar$pctCells)
+
+#Turning the bargraph into an annotation object
+barAnno <- rowAnnotation(bar1 = anno_barplot(as.matrix(cluster3Bar[4])))
+
+
+
+# geneNameAnno <- rowAnnotation(link = anno_mark(at = match(selectedGenes, rownames(scaledExprMat)), 
+#         labels = selectedGenes,
+#         labels_gp = gpar(fontsize = 6),
+#         padding = unit(1, "mm")))  
+
+Heatmap(t(scaledExprMat), 
+        name = "Gene z-score",
+        clustering_distance_columns = "manhattan",
+        cluster_columns = TRUE,
+        show_column_dend = TRUE,
+        column_dend_height = unit(0.5, "cm"),
+        cluster_rows = FALSE,
+        row_order = rowOrder,
+        left_annotation = columnAnno, #using the annotation object that was provided
+        right_annotation = barAnno, #Using the bargraph annotation object that we made
+        show_row_names = FALSE, #Removing the row names since that's where our bargraph will be now
+        show_column_names = TRUE, #Including the gene names on this one just for show
+        column_names_gp = gpar(fontsize = 4))
+```

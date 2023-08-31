@@ -1,0 +1,139 @@
+---
+title: "RChallenge6"
+author: "M. Lawrance"
+date: '2023-04-25'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+```{r load libraries}
+library(devtools)
+install_github("BenaroyaResearch/miscHelpers")
+library(miscHelpers)
+library(Seurat)
+library(SeuratDisk)
+library(ggplot2)
+library(dplyr)
+library(ComplexHeatmap)
+```
+
+```{r make Suerat}
+
+# Here's where we load our counts objects in
+
+RnaCounts <- readRDS("~/Library/CloudStorage/Box-Box/BioinformaticsChallengeCourse/Challenge 6/RNACounts.Rds")
+
+FBCounts <- readRDS("~/Library/CloudStorage/Box-Box/BioinformaticsChallengeCourse/Challenge 6/FBCounts.Rds")
+
+#Create the Seurat Object from the two Count Objects
+
+SeuratObject <- CreateSeuratObject(RnaCounts, assay = "RNA")
+
+SeuratObject[["FB"]] <- CreateAssayObject(FBCounts)
+
+#load and add the metadata
+
+metadata <- readRDS("~/Library/CloudStorage/Box-Box/BioinformaticsChallengeCourse/Challenge 6/Metadata.Rds")
+
+SeuratObject <- AddMetaData(SeuratObject, metadata , col.name = "Cell.Type")
+
+
+```
+
+```{r UMAP projection}
+
+DefaultAssay(SeuratObject) <- "RNA"
+SeuratObject <- Seurat::NormalizeData(SeuratObject) %>% ScaleData()
+
+SeuratObject <- FindVariableFeatures(SeuratObject, nfeatures = 2000)
+
+SeuratObject <- RunPCA(SeuratObject, features = VariableFeatures(object = SeuratObject))
+
+SeuratObject <- RunUMAP(SeuratObject, dims = 1:30)
+
+SeuratObject <- FindNeighbors(SeuratObject, dims = 1:30)
+SeuratObject <- FindClusters(SeuratObject, resolution = 0.5)
+
+Markers <- FindAllMarkers(SeuratObject, logfc.threshold = .25, assay = "RNA")
+
+#UMAP ggplot -- it's just a rasterized geom_point scatterplot where the axis and data come from the umap embeddings
+# Can also used DimPlot which is a built in Seurat function.
+
+ ggplot(
+    data = SeuratObject@meta.data,
+    mapping =
+      aes(x = SeuratObject@reductions$umap@cell.embeddings[,1],
+          y = SeuratObject@reductions$umap@cell.embeddings[,2])) +
+  ggrastr::rasterise(
+    geom_point(mapping = aes_string(color = "seurat_clusters"), size = 1, alpha = 0.1)) +
+  labs(x = "UMAP 1", y = "UMAP 2") +
+  scale_color_manual(
+    "Cluster", 
+    values = big_colorblind_pal(8)) +
+  guides(color = guide_legend(override.aes = list(size = 4, alpha = 1)))
+ 
+```
+ 
+ 
+ 
+```{r Heatmap}
+ 
+ #Heatmap of top up 5 markers for each of the clusters, just filtering for positive fold change and the top 4 pvalues for each
+ 
+ topMarkersHmap <- Markers %>%
+  dplyr::group_by(cluster) %>%
+  dplyr::filter(avg_log2FC > 0) %>%
+  dplyr::slice_min(p_val_adj, n = 4) %>%
+  dplyr::slice_max(avg_log2FC, n = 4) %>%
+  dplyr::mutate(fc_order = order(avg_log2FC)) 
+
+selectedFeatures <- unique(topMarkersHmap$gene)
+
+#Need average expression per cluster to make z scores so we use the Average Expression Function
+clusterAverages <- AverageExpression(SeuratObject, 
+                                    features = selectedFeatures,
+                                    assays = 'RNA',
+                                    group.by = "seurat_clusters",
+                                    use.scale = TRUE,
+                                    return.seurat = T) 
+
+avgExprMat <- clusterAverages[["RNA"]]@data %>% as.matrix()
+
+scaledExprMat <- t(scale(t(avgExprMat)))
+
+
+clusterAnno <- rownames(clusterAverages@meta.data)
+
+clusterColors <- big_colorblind_pal(8)
+names(clusterColors) <- 0:7
+
+columnAnno <- rowAnnotation(Cluster = clusterAnno,
+                              col = list(Cluster = clusterColors),
+                              simple_anno_size = unit(0.25, "cm"))
+
+
+Heatmap(t(scaledExprMat), 
+        name = "Gene z-score",
+        clustering_distance_columns = "manhattan",
+        cluster_columns = TRUE,
+        show_column_dend = TRUE,
+        column_dend_height = unit(0.5, "cm"),
+        cluster_rows = TRUE,
+        show_row_dend = TRUE,
+        left_annotation = columnAnno,
+        #right_annotation = geneNameAnno,
+        show_row_names = TRUE,
+        column_names_rot = 90,
+        column_names_gp = gpar(fontsize = 8),
+        row_names_gp = gpar(fontsize = 10))
+```

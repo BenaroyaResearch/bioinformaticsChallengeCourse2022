@@ -1,0 +1,63 @@
+---
+title: "Challenge4"
+author: "M. Lawrance"
+date: '2023-06-14'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r Load Libraries}
+#Load the libraries we'll need!
+library(dplyr)
+library(tidyverse)
+library(tibble)
+library(ggplot2)
+
+
+
+```
+
+```{r Load Data}
+
+#We'll load in the data and convert it into a more usable form before calculating the PCAs.
+counts.pc <- readRDS("~/Documents/Challenge4/Protein_Counts.RDS")
+
+PCA.all <- counts.pc %>% 
+  column_to_rownames("geneName") %>% 
+  #Convert to log counts per million
+  edgeR::cpm(., log=TRUE) %>% 
+  t() %>% 
+  #Calc PCA
+  prcomp()
+
+```
+
+```{r Plot PCA}
+#Set the labels for the PC plot
+PC1.label <- paste("PC1 (", summary(PCA.all)$importance[2,1]*100, "%)", sep="")
+PC2.label <-paste("PC2 (", summary(PCA.all)$importance[2,2]*100, "%)", sep="")
+
+# Extract PC values
+PCA.all.dat <- as.data.frame(PCA.all$x) %>% 
+  rownames_to_column("libid") %>% 
+  # Select PCs for plotting
+  dplyr::select(libid, PC1:PC3) %>% 
+  # Merge with metadata
+  left_join(design, by="libid")
+
+plot_pca_unnorm_by_qc <- ggplot(PCA.all.dat, aes(PC1, PC2)) +
+           geom_point(aes(color=treatment),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="Un-normalized logCPM") + scale_color_manual(values = c("Media" = "#E69F00","IFN trained" = "#0072B2")) +
+  coord_fixed(ratio=1) 
+plot_pca_unnorm_by_qc
+```

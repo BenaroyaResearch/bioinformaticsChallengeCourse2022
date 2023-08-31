@@ -1,0 +1,137 @@
+---
+title: "P356_Code_Challenge_MFL"
+author: "M. Lawrance"
+date: '2023-03-28'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r p356 stuff}
+#mount the libraries we need to run this
+library(apird)
+library(ggplot2)
+library(dplyr)
+library(tidytext)
+library(scales)
+library(edgeR)
+
+#use apird to pull down all of the data -- library names, annotations, metrics, and counts
+libs <- getProjectLibs('P356-1')
+anno <- getAnno(libs)
+metrics <- getMetrics(libs)
+
+#need to manipulate the counts object a bit -- transpose it and give it a column with the gene names, then remove the
+# flow cell identifier, ect, for cleanliness
+counts <- apird::getGeneCounts(libs) %>% t()
+counts_raw <- as.data.frame(counts) %>% rownames_to_column("geneName")
+names_counts <- sub("_AMERGEFC24AND25M5", "",names(counts_raw))
+counts <- counts_raw %>% setNames(names_counts)
+
+#can use MERGE here but I use left_join
+design <- left_join(anno,metrics)
+
+
+```
+
+
+```{r setQcCuts}
+# set QC thresholds
+# Usually start with lenient cutoffs and then increase or decrease as needed 
+pct_aligned_cutoff = 95
+fastq_total_reads_cutoff = 1E6
+median_cv_coverage_cutoff = 0.45
+
+```
+
+```{r plots}
+#plot everything, starting with mean cv vs percent aligned 
+design %>% 
+ggplot(aes(median_cv_coverage, pct_aligned)) +
+           geom_point(aes(color=sampleGroup),
+                      size=3) +
+  #Label points outside cutoffs
+  geom_text_repel(data=filter(design,
+                            median_cv_coverage > median_cv_coverage_cutoff | 
+                            pct_aligned < pct_aligned_cutoff),
+            aes(label=libid), show.legend = FALSE) +
+  # Add cutoff lines
+  geom_vline(xintercept=median_cv_coverage_cutoff, linetype=2) +
+  geom_hline(yintercept=pct_aligned_cutoff, linetype=2) +
+  #Beautify
+  theme_classic() +
+  theme(legend.position = "bottom") +
+  labs(x="Median CV coverage", y="Percent aligned") + scale_color_manual(values = c("tumor" = "#E69F00","naive" = "#0072B2"))
+  # lims(x=c(0,1.2), y=c(0,1))
+
+#plotting the raw number of reads
+design <- design %>%  mutate(col.group = ifelse(fastq_total_reads >= 1E6, "1,000,000+",
+                            ifelse(fastq_total_reads >= 5E5, "500,000+",
+                                   ifelse(fastq_total_reads >= 2.5E5, "250,000+",
+                                          ifelse(fastq_total_reads >= 1E5, "100,000+",
+                                                 "Less than 100,000")))),
+          col.group = factor(col.group, levels=c("1,000,000+","500,000+","250,000+",
+                                                 "100,000+","Less than 100,000")))
+
+design %>% ggplot(aes(x=reorder_within(libid, by=fastq_total_reads,within = col.group), 
+           y=fastq_total_reads, fill=col.group))  +
+    geom_col() +
+
+    # Add cutoff line
+    geom_hline(yintercept = fastq_total_reads_cutoff) +
+
+    # Beautify
+    theme_classic() +
+    theme(axis.text.x = element_text(size=rel(0.75),
+                                     angle = 90, hjust = 1)) +
+    labs(x="libID", y="Total reads", fill="") +
+    scale_x_reordered() +
+    scale_y_continuous(trans = 'log10',
+    breaks = trans_breaks("log10", function(x) 10^x),
+    labels = trans_format("log10", math_format(10^.x)))
+
+
+PCA.all <- counts %>% 
+  column_to_rownames("geneName") %>% 
+  #Convert to log counts per million
+  edgeR::cpm(., log=TRUE) %>% 
+  t() %>% 
+  #Calc PCA
+  prcomp()
+
+#Set the labels for the PC plot
+PC1.label <- paste("PC1 (", summary(PCA.all)$importance[2,1]*100, "%)", sep="")
+PC2.label <-paste("PC2 (", summary(PCA.all)$importance[2,2]*100, "%)", sep="")
+
+# Extract PC values
+PCA.all.dat <- as.data.frame(PCA.all$x) %>% 
+  rownames_to_column("libid") %>% 
+  # Select PCs for plotting
+  dplyr::select(libid, PC1:PC3) %>% 
+  # Merge with metadata
+  left_join(design, by="libid")
+
+plot_pca_unnorm_by_qc <- ggplot(PCA.all.dat, aes(PC1, PC2)) +
+           geom_point(aes(color=sampleGroup),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="Un-normalized logCPM") + scale_color_manual(values = c("tumor" = "#E69F00","naive" = "#0072B2")) +
+  coord_fixed(ratio=1) 
+plot_pca_unnorm_by_qc
+```
+
+```{r filtering}
+#I wouldn't necessarily do this because of my understanding of tumor biology, but if you wanted to cut off your design and counts based on the alignment:
+
+final_design <- filter(design, pct_aligned > pct_aligned_cutoff)
+
+counts <- counts %>% 
+  column_to_rownames("geneName")
+
+final_counts <- col
+```

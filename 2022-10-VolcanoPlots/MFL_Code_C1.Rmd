@@ -1,0 +1,135 @@
+---
+title: "BioinformaticsChallenge1"
+author: "M. Lawrance"
+date: '2022-10-25'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r library packages}
+# Load necessary libraries. Note that edgeR will load dependencies including limma assuming they are installed.
+# I'm using the Seurat package solely for the noLegend() function, because I am lazy.
+library(ggplot2)
+library(ggrepel)
+library(edgeR)
+library(Seurat)
+
+```
+
+```{r PART 2}
+
+# I am starting with part 2 since that generates the input for part 1
+# Note that for using your own data, the BRI apird package is great for getting counts matrices
+
+# In this case the matrix is provided as a pre-normalized RDS file but that won't be the case for raw data
+# acquired via apird.
+
+#setting working directory to the box folder with the data
+setwd("~/Library/CloudStorage/Box-Box/BioinformaticsChallengeCourse/Challenge 1/")
+
+#loading in the Rds of the counts -- Sarah in your case this should be read.csv(countsFile.csv)
+
+y <- read.delim("TableOfCounts.txt")
+
+# Define the groups based on their column position (eg., the first and second columns are group 1, third through fifth
+# are group 2, etc)
+group <- factor(c(1,1,2,2,2,3,3,3,4,4,4,5,5,5))
+
+#Turn the counts data into a DGEList object
+y <- DGEList(counts=y,group=group)
+
+#Filter the library based on expression and calculate the normalization factors:
+
+keep <- filterByExpr(y)
+y <- y[keep,,keep.lib.sizes=FALSE]
+y <- calcNormFactors(y)
+
+# Create a design matrix based on the grouping of the samples defined in the previous step, using the data from the
+# counts matrix.
+
+design <- model.matrix(~0+group, data=y$samples)
+
+# rename the columns of the design matrix to something more informative (they default to the number of the group, ie, 
+# group1 rather than CtrlNaive)
+
+colnames(design) <- c("CtrlNaive","GFPNaive", "CtrlActive", "GFPActive", "ZSTActive")
+
+#estimate dispersion factors of the data
+
+y <- estimateDisp(y,design)
+
+# Fit a quasi-likelihood negative binomial generalized log-linear model to count data. Conduct genewise statistical tests # for a given coefficient or contrast -- in this case everything contained in the design matrix (though we'll only be  
+# using one comparison ultimately)
+
+fit <- glmQLFit(y, design)
+
+# Make a contrast for the specific comparison we're interested in here, ie, the stimulated controls and the stimulated CA # Foxo1 (GFPs)
+StimVsStim <- makeContrasts(GFPActive-CtrlActive, levels=design)
+
+# run a general linear model quasi likelihood test which produces p-values for genes in the selected contrast
+qlf.Active <- glmQLFTest(fit, contrast=StimVsStim)
+
+# pull the most significant genes from the prior step. In this case I took the top 10,000 because I want to have
+# a volcano plot that includes both highly significant and background genes. This object is the same as the topTable
+# Rds object provided for the beginning of part 1
+
+genesStim <- topTags(qlf.Active, n= 10000)
+
+```
+
+```{r part 1}
+
+# I am going to use the genesStim object to begin this part, but it is the same object as you would end up with if you
+# readRDS in the DEGenes.Rds object.
+
+# genesStim <- readRDS("DeGenes.Rds")
+
+# I am subsetting the genes from the object with a FDR of less than .05 (so only the significants). This resulted in way # too many genes to label on the volcano plot without it looking super messy. Dplyr can be used to manipulate dataframes effectively as an option.
+
+VolcSubsetActive <- subset(genesStim$table, FDR < .05) %>% .[1]
+
+# So instead I arbitrarily took the top fifteen
+
+VolcSubsetActive <- VolcSubsetActive[1:15,]
+
+# produce the volcano plot with ggplot
+
+  Actives <- ggplot(data = genesStim$table,  # set the data as the table contained within the object we loaded
+                    aes(x=logFC, y=-log10(FDR), # set the x axis and y axis to logFC and FDR respectively
+                        color = logFC>0)) + # set the color condition to be if the FC is above or below 0 
+    geom_point(alpha=0.7, size=1, shape = 19) + # define the transparency, size, and shape of the dots 
+    ylim(0,15) + #define the limits of the Y axis to range from 0 to 15 
+    xlim(-10,10) + # define the limits of the X axis to range from -10 to 10
+    geom_text_repel(data=VolcSubsetActive, # set up the labeling of the top 15 genes I subsetted earlier
+                  label = rownames(VolcSubsetActive), #use the rownames (which are the gene names) as the label
+                  max.overlaps = Inf, min.segment.length = unit(0, 'lines'), # set length of label lines
+                  size = 3, # set size of the label
+                  col = "black") + # set color of label
+    scale_color_manual(values = c("darkcyan", "red"), # set color of dots for below and above 0
+                  name = "", 
+                  label = NULL) +
+    labs(x = "Log Fold-change", # labels of the axes and the title
+                  y = "-log10 FDR",
+                  title = "Activated WT vs Activated Foxo1-CA") +
+    geom_hline(yintercept= -log10(.01), #set up a horizontal line to indicate a FDR of .01
+                  color="black",
+                  linetype="dotted",
+                  size=1.0) +
+    theme(plot.title = element_text(hjust = .5)) + # adjust the plot title's horizontal alignment slightly
+    NoLegend() # remove the legend to clear clutter
+  
+  # display the chart!
+  print(Actives)
+  
+  # save as a pdf!
+  pdf(file = "MFL_volcano.pdf", height = 8, width = 8)
+  Actives
+  dev.off()
+    ```
+    

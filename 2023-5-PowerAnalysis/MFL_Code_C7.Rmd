@@ -1,0 +1,117 @@
+---
+title: "RCoding7"
+author: "M. Lawrance"
+date: '2023-05-30'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#Load Packages
+library(tidyverse)
+library(dplyr)
+library(fixest)
+library(broom)
+```
+
+```{r}
+#Let's set up a power analysis simulation function!
+
+power_analyses  <- function(effect, sample_size, yvar, xmin, xmax) {
+  coeff <- c() #Make a vector to store the coefficients
+  significance <- c() #Make a vector to store the number of the coefficients that are significant
+  
+  for (i in 1:2000) {
+    # Form the data structure using our inputs
+    tib <- tibble(
+      X = runif(sample_size, xmin, xmax) #samplesize and the ranges of values expected from our predictor value
+    ) %>%
+      mutate(Y = effect*X + rnorm(sample_size, mean = 0, sd = yvar)) # derive Y from X based on our expected effect size, plus                                                                           the variance of our y value
+    
+    # Run the analysis
+    model <- feols(Y ~ X, data = tib, se = 'hetero')
+    
+    # Return the results
+    coeff[i] <- coef(model)[2]
+    significance[i] <- tidy(model)$p.value[2] <= .05
+  }
+    significance %>%
+    mean() %>%
+    return()
+}
+
+# The value returned by this function is the statistical power of the experiment with your chosen parameters.
+```
+
+## Including Plots
+
+You can also create plots, for example:
+
+```{r}
+#Let's look at how a range of effect sizes influence our power
+
+#Make an empty vector to hold the results
+
+power_results <- c()
+
+#Make a range of effects you want to test -- here from .05 - 1, incrementing by .05
+effect_range <- seq(from =.05, to = 1, by = .05)
+
+# This for loop will store the results of each effect range iterratively in the results vector
+for (i in 1:length(effect_range)) {
+  print(paste("Running analysis for effect size", effect_range[i]))
+  power_results[i] <- power_analyses(effect = effect_range[i], sample_size = 1000, yvar = 3, xmin = 0, xmax = 3)
+}
+
+# Combine the results and the input into a tibble that is easier to work with
+power_stats <- tibble(effect = effect_range,
+                        power = power_results)
+power_stats #View tibble
+
+#plot the results
+ggplot(power_stats, 
+       aes(x = effect, y = power)) +
+  geom_line(color = 'red', size = 1.5) + 
+  # add a horizontal line at 80%
+  geom_hline(aes(yintercept = .8), linetype = 'dashed') + 
+  theme_minimal() + 
+  scale_y_continuous(labels = scales::percent) + 
+  labs(x = 'Linear Effect Size', y = 'Power')
+```
+Okay, so this isn't great -- we need an effect size of ~ .3 to have good statistical power. Not impossible but not great either. Let's try the sample size instead.
+
+
+```{r}
+
+#Make a vector to store the results.
+power_results <- c()
+
+#Make a range of sample sizes -- this time from 1,000 samples to 20,000 samples, incrementing by 1,000
+sample_range <- seq(from =1000, to = 20000, by = 1000)
+
+#Mostly the same as before, simply switching the range to the sample_size parameter
+for (i in 1:length(sample_range)) {
+  print(paste("Running analysis for sample size", sample_range[i]))
+  power_results[i] <- power_analyses(effect = .1, sample_size = sample_range[i], yvar = 3, xmin = 0, xmax = 3)
+}
+
+# Where do we cross 80%?
+power_stats <- tibble(samples = sample_range,
+                        power = power_results)
+power_stats
+
+ggplot(power_stats, 
+       aes(x = samples, y = power)) +
+  geom_line(color = 'red', size = 1.5) + 
+  # add a horizontal line at 80%
+  geom_hline(aes(yintercept = .8), linetype = 'dashed') + 
+  theme_minimal() + 
+  scale_y_continuous(labels = scales::percent) + 
+  labs(x = 'Number of Samples', y = 'Power')
+
+```
+In order to get 80% statistical confidence with an effect size at .1 at the variances we see in our predictor/response, we need 10,000 samples. You can keep trying this with different distributions and variances to see how making your inputs more/less predictable will change you ability to achieve power.
