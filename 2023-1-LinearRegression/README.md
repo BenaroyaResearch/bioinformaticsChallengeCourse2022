@@ -8,7 +8,7 @@ For the purpose of this exercise, we'll be using a slimmed down version of these
 
 The CSV datafile required in this challenge can be downloaded from Box here:
 
-https://bri.box.com/s/nz1bgscler7eabeygz3iiazoj0eodmov
+https://bri.box.com/s/5dmuaksvyfkpo7lof8khy8escude7iav
 
 Code submissions can be uploaded using the following link: https://bri.app.box.com/f/f103a2e7f11c487cb1b1707d5624ead1. This link will work, but upload attempts within Box won't work (you can't navigate to the codeSubmissions sub-folder in the online interface to Box and upload once there). 
 
