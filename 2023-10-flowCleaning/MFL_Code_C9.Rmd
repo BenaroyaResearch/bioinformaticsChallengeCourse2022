@@ -1,0 +1,88 @@
+---
+title: "Flow Cleaning"
+author: "M. Lawrance"
+date: '2023-10-31'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(readxl)
+library(stringr)
+
+```
+
+
+```{r sample annotation load, echo=FALSE}
+
+#set working directory to the bioinformatics folder
+knitr::opts_knit$set(root.dir ="~/Library/CloudStorage/Box-Box/BioinformaticsChallengeCourse/Challenge 9/")
+# read in the sample annotation data
+sampleAnnotation <- 
+  read_xlsx("annotation.xlsx", sheet = "TN18 PBMC List") %>%
+  remove_all_NA_rowcols()
+
+dim(sampleAnnotation)
+```
+
+```{r}
+#read in the reportables
+flowReportables <- read_xlsx("reportables.xlsx", sheet = "Summary - unculled all values",
+            na = c("", "n/a"))  %>% #NAs in the reportables are n/a, NA, and empty cells
+  remove_all_NA_rowcols()
+
+dim(flowReportables)
+
+#comparing the dimensions of the sampleAnnotatio and the flow reportables, by removing the NAs, we have removed 8 samples -- our datasheets no longer match so we need to match them up! This is where left-joining and merging comes in
+```
+
+```{r mergeSampleAnnotationCombinedFlowReportables}
+# Let's look for columns they have in common
+intersect(colnames(sampleAnnotation), colnames(flowReportables))
+
+#No columns in common -- looks like we have to rename something we know matches. The 'Vial Barcode' in the annotation is the same as 'Sample' in flowReportables with a minor change -- we need to hack off the end of it.
+
+flowReportables$Sample
+
+flowReportables$`Vial Barcode` <-
+  str_extract(flowReportables$Sample, "(?<=_)TN[0-9A-Z]+(?=\\.)")
+# the regular expression, broken down:
+# (?<=_) means preceded by "_"
+# TN matches the "TN"
+# [0-9A-Z]+ means any number of capital letter, an indefinite number of times
+# (?=\\.) means followed by "."
+
+# check values in this new column match those in the combined sample annotation
+# check that 
+intersect(sampleAnnotation$`Vial Barcode`, flowReportables$`Vial Barcode`)
+
+# verify that the number of matching values of Vial Barcode is the same as the number of rows in flowReportables
+length(intersect(sampleAnnotation$`Vial Barcode`, flowReportables$`Vial Barcode`))
+
+# check out which columns each dataframe is bringing to the party
+setdiff(colnames(sampleAnnotation), colnames(flowReportables))
+setdiff(colnames(flowReportables), colnames(sampleAnnotation))
+
+
+# merge the two data objects
+mergedAnnotationFlowReportables <-
+  left_join(sampleAnnotation, flowReportables)
+```
+
+```{r visualize a variable}
+    ggplot(mergedAnnotationFlowReportables,
+           mapping = aes(x = pct_CD8_of_Tcells)) +
+    geom_histogram() +
+    labs(x = "pct_CD8_of_Tcells") + labs(x= "Percent CD8 T-cells", y = "Number of Samples") + 
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"), 
+        plot.title = element_text(hjust = 0.5)) 
+```
