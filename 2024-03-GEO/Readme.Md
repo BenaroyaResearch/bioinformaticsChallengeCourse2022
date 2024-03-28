@@ -3,7 +3,7 @@
 
 Reproducibility in science is extremely important, and in this effort, an enormous amount of data has been collected on repositories such as IMPORT and GEO. Working with these datasets can be extremely valuable as comparisons to ongoing work at BRI, or as meta studies in which no new data is generated, but existing data is reanalyzed in new ways or in conjunction with other data in metastudies that shed new insight.
 
-In this challenge, we will be accessing a GEO dataset of healthy aveolar macrophages isolated from two conditions: smokers and non-smokers. The GSE accession number is GSE183973. The important acquisitions for analysis are the annotations (so we know which sample is which) and the count matrices. Once we have those, we can repeat previous analyses from this course on those data.
+In this challenge, we will be accessing a GEO dataset of cultured aveolar macrophages of various cell types. The GSE accession number is GSE188945. The important acquisitions for analysis are the annotations (so we know which sample is which) and the count matrices. Once we have those, we can repeat previous analyses from this course on those data.
 
 ## Pseudocode:
 
