@@ -17,6 +17,6 @@ Box folder with RDS: https://bri.box.com/s/25u8kdzsshamkfajtrk8szho0nsmnqwt
     - either use a GO ontology term (ie, cellular, biological, so forth) or if you're a T-cell researcher and curious, come up with a list of 10-20 genes you think might be involved in Foxo1 -- or just pick a random list of genes as a null hypothesis.
     - If you're doing a custom geneset, look up TERM2GENE -- in short, you need an additional dataframe with a row for each of your custom genes -- one column for the gene name, and the second column for the term (the function or pathway overall you think the gene belongs to).
 - Step 4: perform GSEA analyses
-    - recommended functions: GSEA() fir custom, GseGEO() for ontology terms
+    - recommended functions: GSEA() for custom, GseGEO() for ontology terms
 - Step 5: Visualize your results in your prefered way:
     - recommended options: dotplot(), emapplot()
