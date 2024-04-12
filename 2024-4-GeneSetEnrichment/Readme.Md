@@ -5,9 +5,7 @@ GeneSet Enrichment analyses are a set of tools used to determine if a reference 
 
 In the following box folder, you will find an RDS from challenge 1: refer back to that challenge for a thorough description of these data, but in short -- these are the DE genes from consitutiently expressing Foxo1 T-cells versus wildtype (positive logfold changes are higher in CA Foxo1). For this challenge, there are two approaches (One for GO terms and one for a custom Geneset) and both or either can be persued.
 
-Box folder with RDS(https://bri.box.com/s/25u8kdzsshamkfajtrk8szho0nsmnqwt).
-
-Code submission folder.
+Box folder with RDS: https://bri.box.com/s/25u8kdzsshamkfajtrk8szho0nsmnqwt
 
 ## Pseudocode:
 
