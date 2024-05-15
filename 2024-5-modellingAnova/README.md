@@ -5,7 +5,7 @@ Often when designing experiments, we have a range of predictor variables, where 
 
 In the following challenge, we'll run an ANalysis Of VAriance (ANOVA) on a subset of cytof data derived from the Sound Life Project. The data contains a number of cell proportion measurements (dependent variables) and a number of different predictor variables (sex, cohort [age], CMV disease state). We can use model testing via ANOVA and Akaike's Information Criteria Corrected (AICc) in order to determine which, if any, of our predictors are explaining a meaninful proportion of the variation in the response variable.
 
-An RDS file containing a the subset of the Sound Life data can be found here: 
+An RDS file containing a the subset of the Sound Life data can be found here: https://bri.box.com/s/1u69lmlbvsux00yk0o3gjrh6o87artje
 
 ## Pseudocode:
 
@@ -24,4 +24,4 @@ An RDS file containing a the subset of the Sound Life data can be found here:
     - There are a number of different ways to check for issues with a given model, including checking the residuals for homoscedasticity
     - Recommended functions: plot()
  
-Submit code here:
+Submit code here: https://bri.app.box.com/f/c9db9bf06e6143d99c30d952b5a1ce8b
