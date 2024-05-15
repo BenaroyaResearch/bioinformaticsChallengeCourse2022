@@ -3,7 +3,7 @@
 
 Often when designing experiments, we have a range of predictor variables, where each predictor's contribution to the effect we're attempting to measure is unknown -- if it exists at all. In order to maximize our likelihood of measuring the right predictor variables, we often simply collect absolutely everything we can think of. This leads to a situation in which we have a plethora of predictor variables, some of which are informative and many of which are less so. Parsing these predictors and correctly assessing which model best explains your response variables is an important process.
 
-In the following challenge, we'll run an ANalysis Of VAriance (ANOVA) on a subset of cytof data derived from the Sound Life Project. The data contains a number of cell proportion measurements (dependent variables) and a number of different predictor variables (sex, cohort [age], CMV disease state). We can use model testing via ANOVA and Akaike's Information Criteria Corrected (AICc) in order to determine which, if any, of our predictors are explaining a meaninful proportion of the variation in the response variable.
+In the following challenge, we'll run an ANalysis Of VAriance (ANOVA) on a subset of cytof data derived from the Sound Life Project. The data contains a number of absolute cell measurements (dependent variables) and a number of different predictor variables (sex, cohort [age], CMV disease state). We can use model testing via ANOVA and Akaike's Information Criteria Corrected (AICc) in order to determine which, if any, of our predictors are explaining a meaninful proportion of the variation in the response variable.
 
 An RDS file containing a the subset of the Sound Life data can be found here: https://bri.box.com/s/1u69lmlbvsux00yk0o3gjrh6o87artje
 
